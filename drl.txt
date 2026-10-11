@@ -1,0 +1,102 @@
+Practical no 1:
+Aim: Implement gradient descent from scratch Code:
+import numpy as np
+x = np.array([1,2,3,4])
+y = np.array([2,4,6,8]) w = 0
+for i in range(100): p = w*x
+w = w - 0.01*np.mean((p-y)*x)
+print("Weight:", w) print("Prediction:", w*5)
+
+Practical no 2
+Aim: Transfer learning using ResNet50 Code:
+import tensorflow as tf
+from tensorflow.keras.applications import ResNet50
+from tensorflow.keras.applications.resnet50 import decode_predictions model = ResNet50(weights="imagenet")
+
+img = tf.keras.utils.load_img("dog.avif", target_size=(224,224)) x = tf.keras.utils.img_to_array(img)
+x = tf.expand_dims(x, 0) p = model.predict(x)
+
+print(decode_predictions(p, top=1)) 
+
+Practical no 3
+Aim: Object detection using YOLO Code:
+!pip install ultralytics
+from ultralytics import YOLO import matplotlib.pyplot as plt
+
+model = YOLO("yolo11n.pt") results = model("images.jpg") # Show detected image
+img = results[0].plot()
+
+
+plt.imshow(img) plt.axis("off") plt.show() 
+
+Practical no 4
+Aim: CNN from scratch Code:
+import tensorflow as tf
+(x,y),(xt,yt) = tf.keras.datasets.mnist.load_data() x = x[...,None] / 255
+model = tf.keras.Sequential([ tf.keras.layers.Conv2D(8,3,activation="relu",
+input_shape=(28,28,1)), tf.keras.layers.Flatten(), tf.keras.layers.Dense(10,activation="softmax")
+])
+model.compile("adam","sparse_categorical_crossentropy", metrics=["accuracy"])
+
+model.fit(x,y,epochs=1) p = model.predict(x[:1])
+print("Predicted:", p.argmax()) print("Actual:", y[0])
+
+
+Practical no 5
+Aim: LSTM for time-series Code:
+#lstm
+import numpy as np
+from tensorflow.keras import Sequential
+from tensorflow.keras.layers import LSTM,Dense
+
+
+x = np.array([[1,2,3],[2,3,4],[3,4,5]]) y = [4,5,6]
+
+x = x.reshape(3,3,1)
+
+
+model = Sequential([ LSTM(10,input_shape=(3,1)), Dense(1)
+])
+model.compile("adam","mse") model.fit(x,y,epochs=10,verbose=0) print(model.predict(x))
+
+
+Practical no 6
+Aim: Q-Learning Implementation Code:
+import numpy as np
+
+
+Q = np.zeros((5, 2))
+
+
+for i in range(100): s = 0
+for j in range(5):
+a = np.argmax(Q[s]) ns = min(s + 1, 4)
+r = 1 if ns == 4 else 0
+Q[s,a] += 0.1 * (r + 0.9 * max(Q[ns]) - Q[s,a]) s = ns
+
+print(Q)
+
+
+Practical no 7
+Aim: Hyperparameter Tuning (Optuna) Code:
+import optuna
+
+
+def objective(trial):
+x = trial.suggest_int("x", 1, 10) return x ** 2
+
+study = optuna.create_study(direction="maximize") study.optimize(objective, n_trials=10)
+
+print(study.best_params)
+
+
+Practical no 8:
+Aim: Deployment of FastAPI Code:
+from fastapi import FastAPI
+
+
+app = FastAPI()
+
+
+@app.get("/") def home():
+return {"message": "AI Model API is running"}
